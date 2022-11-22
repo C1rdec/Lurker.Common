@@ -13,6 +13,8 @@ namespace Lurker.Common.Models
 
         public abstract LauncherType Launcher { get; }
 
+        public abstract string Id { get; }
+
         #endregion
 
         #region Methods

@@ -40,7 +40,7 @@ namespace Lurker.Common.Models
             return result.ToBitmap();
         }
 
-        protected abstract void Initialize();
+        public abstract void Initialize();
 
         #endregion
     }

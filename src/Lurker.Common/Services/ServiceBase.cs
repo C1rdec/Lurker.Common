@@ -42,13 +42,21 @@ namespace Lurker.Common.Services
                 else
                 {
                     // Open the launcher to get the Process
+                    var currentExePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                    var linkPath = Path.Combine(Path.GetDirectoryName(currentExePath), OpenLink);
                     var command = CliWrap.Cli
                                     .Wrap("cmd.exe")
-                                    .WithArguments($"/C {OpenLink}");
+                                    .WithArguments($"/C {linkPath}");
                     await command.ExecuteAsync();
 
                     var processService = new ProcessService(ProcessName);
-                    var processId = await processService.WaitForProcess(false);
+                    var processId = await processService.WaitForProcess(6666);
+
+                    if (processId == -1)
+                    {
+                        return string.Empty;
+                    }
+
                     var process = Process.GetProcessById(processId);
                     ExecutablePath = process.GetMainModuleFileName();
                 }

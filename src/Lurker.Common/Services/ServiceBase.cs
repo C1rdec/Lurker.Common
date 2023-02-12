@@ -28,41 +28,48 @@ namespace Lurker.Common.Services
 
         public async Task<string> InitializeAsync(string executablePath = null)
         {
-            if (!string.IsNullOrEmpty(executablePath) && File.Exists(executablePath))
+            try
             {
-                ExecutablePath = executablePath;
-            }
-            else
-            {
-                var runningSteamProcess = Process.GetProcessesByName(ProcessName);
-                if (runningSteamProcess.Any())
+                if (!string.IsNullOrEmpty(executablePath) && File.Exists(executablePath))
                 {
-                    ExecutablePath = runningSteamProcess[0].GetMainModuleFileName();
+                    ExecutablePath = executablePath;
                 }
                 else
                 {
-                    // Open the launcher to get the Process
-                    var currentExePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                    var linkPath = Path.Combine(Path.GetDirectoryName(currentExePath), OpenLink);
-                    var command = CliWrap.Cli
-                                    .Wrap("cmd.exe")
-                                    .WithArguments($"/C {linkPath}");
-                    await command.ExecuteAsync();
-
-                    var processService = new ProcessService(ProcessName);
-                    var processId = await processService.WaitForProcess(6666);
-
-                    if (processId == -1)
+                    var runningSteamProcess = Process.GetProcessesByName(ProcessName);
+                    if (runningSteamProcess.Any())
                     {
-                        return string.Empty;
+                        ExecutablePath = runningSteamProcess[0].GetMainModuleFileName();
                     }
+                    else
+                    {
+                        // Open the launcher to get the Process
+                        var currentExePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                        var linkPath = Path.Combine(Path.GetDirectoryName(currentExePath), OpenLink);
+                        var command = CliWrap.Cli
+                                        .Wrap("cmd.exe")
+                                        .WithArguments($"/C {linkPath}");
+                        await command.ExecuteAsync();
 
-                    var process = Process.GetProcessById(processId);
-                    ExecutablePath = process.GetMainModuleFileName();
+                        var processService = new ProcessService(ProcessName);
+                        var processId = await processService.WaitForProcess(6666);
+
+                        if (processId == -1)
+                        {
+                            return string.Empty;
+                        }
+
+                        var process = Process.GetProcessById(processId);
+                        ExecutablePath = process.GetMainModuleFileName();
+                    }
                 }
-            }
 
-            return ExecutablePath;
+                return ExecutablePath;
+            }
+            catch 
+            {
+                return string.Empty;
+            }
         }
 
         #endregion

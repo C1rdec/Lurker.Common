@@ -51,8 +51,12 @@ namespace Lurker.Common.Models
         public abstract void Initialize();
 
         protected void SetExeFile(string installationFolder)
+            => SetExeFile(installationFolder, null);
+
+        protected void SetExeFile(string installationFolder, string endOfFileFilter)
         {
-            var exeFiles = new DirectoryInfo(installationFolder).GetFiles($"*.exe", SearchOption.AllDirectories);
+            var filter = string.IsNullOrEmpty(endOfFileFilter) ? "*.exe" : $"*{endOfFileFilter}.exe";
+            var exeFiles = new DirectoryInfo(installationFolder).GetFiles(filter, SearchOption.AllDirectories);
             if (exeFiles.Any())
             {
                 var searchTerm = Name;

@@ -4,5 +4,6 @@
     {
         Steam,
         Epic,
+        BattleNet,
     }
 }

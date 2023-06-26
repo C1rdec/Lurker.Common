@@ -26,7 +26,7 @@ namespace Lurker.Common.Services
 
         public abstract List<TGame> FindGames();
 
-        public async Task<string> InitializeAsync(string executablePath = null)
+        public virtual async Task<string> InitializeAsync(string executablePath = null)
         {
             try
             {

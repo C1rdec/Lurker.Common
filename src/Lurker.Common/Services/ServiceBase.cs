@@ -18,7 +18,7 @@ namespace Lurker.Common.Services
 
         protected abstract string ProcessName { get; }
 
-        protected abstract string OpenLink { get; }
+        protected abstract string OpenUrl { get; }
 
         #endregion
 
@@ -44,12 +44,11 @@ namespace Lurker.Common.Services
                     else
                     {
                         // Open the launcher to get the Process
-                        var currentExePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                        var linkPath = Path.Combine(Path.GetDirectoryName(currentExePath), OpenLink);
-                        var command = CliWrap.Cli
-                                        .Wrap("cmd.exe")
-                                        .WithArguments($"/C {linkPath}");
-                        await command.ExecuteAsync();
+                        Process.Start(new ProcessStartInfo()
+                        {
+                            FileName = OpenUrl,
+                            UseShellExecute = true
+                        });
 
                         var processService = new ProcessService(ProcessName);
                         var processId = await processService.WaitForProcess(6666);
